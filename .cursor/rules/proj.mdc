@@ -1,0 +1,116 @@
+---
+description: 
+globs: *.c,*.h,*.hpp,*.cpp
+alwaysApply: false
+---
+# ESP32-S3 Cursor Project Optimization Rules (ESP-IDF)
+
+## Memory Management
+
+1. **Static Allocation Over Dynamic**
+   - Prefer static memory allocation whenever possible
+   - When using dynamic allocation, implement a custom memory pool for frequently allocated objects of the same size
+   - Avoid recursive functions with large local variables
+
+2. **Strategic Memory Distribution**
+   - IRAM: Place time-critical code in internal RAM
+   - DRAM: Use for frequently accessed variables
+   - Flash: Store constants and less frequently accessed data
+   - Reserve at least 20% of heap memory for runtime operations
+
+3. **Buffer Management**
+   - Reuse buffers when possible instead of allocating/freeing repeatedly
+   - Implement a buffer pool for common operations
+   - Consider zero-copy techniques when passing data between components
+
+4. **Memory Fragmentation Prevention**
+   - Group allocations of similar lifetimes
+   - Implement a defragmentation routine for long-running operations
+   - Monitor heap fragmentation metrics and implement mitigation strategies
+
+## Performance Optimization
+
+1. **Processor Utilization**
+   - Use dual cores efficiently (Core 0 for system/Wi-Fi, Core 1 for application)
+   - Implement task priorities carefully to prevent priority inversion
+   - Consider critical sections only when absolutely necessary
+
+2. **Algorithm Optimization**
+   - Profile code to identify hot spots
+   - Unroll small loops where beneficial
+   - Use lookup tables for complex calculations
+   - Consider fixed-point arithmetic instead of floating-point when precision allows
+
+4. **Compiler Optimization**
+   - Use `-O2` optimization for most code
+   - Consider `-Os` for size-critical sections
+   - Use appropriate flags for specific optimizations (e.g., `-ffast-math`)
+   - Enable link-time optimization (LTO)
+
+## Power Management
+
+1. **Peripheral Power**
+   - Power down unused peripherals
+   - Use interrupt-driven approaches rather than polling
+
+## Testing and Benchmarking
+
+1. **Memory Metrics with ESP-IDF**
+   - Use `heap_caps_get_info()` to track heap usage
+   - Configure `CONFIG_ESP_SYSTEM_CHECK_INTERRUPT_STACK_OVERFLOW` via menuconfig
+   - Utilize `esp_get_free_heap_size()` and `esp_get_minimum_free_heap_size()` for runtime monitoring
+   - Implement `esp_task_wdt_add()` for task watchdog monitoring
+
+2. **Performance Metrics**
+   - Use `esp_timer_get_time()` for high-resolution timing
+   - Implement `esp_pm_trace` for power management analysis
+   - Track task statistics with `vTaskGetRunTimeStats()`
+   - Profile with `esp_timer_dump()` to identify timing issues
+
+3. **Build Analysis**
+   - Run `idf.py size` regularly during development
+   - Compare build sizes with previous versions using `idf.py size-files --diff`
+   - Use `idf.py monitor` with core dumps enabled for debugging
+   - Consider using ESP-IDF's system view tracing for detailed task analysis
+
+## ESP32-S3 Specific Optimizations
+
+1. **PSRAM Usage Guidelines**
+   - Access PSRAM in 32-byte aligned blocks when possible
+   - Place frequently accessed data in internal memory
+   - Consider DMA for large PSRAM transfers
+
+2. **Cache Configuration**
+   - Configure instruction and data caches appropriately
+   - Align critical code to cache line boundaries (32 bytes)
+   - Consider cache ways partitioning for critical tasks
+
+3. **Hardware Acceleration**
+   - Use hardware crypto accelerators for encryption/decryption
+   - Leverage DMA-capable peripherals (SPI, I2S, etc.)
+   - Utilize the dedicated vector instructions for DSP operations
+
+## ESP-IDF Specific Optimizations
+
+1. **Build System**
+   - Use `idf.py size-components` to identify memory usage hotspots
+   - Leverage component-based architecture for better modularity
+   - Implement custom linker scripts (.ld) for fine-grained memory control
+   - Use `idf.py size-files` to identify which object files consume the most space
+
+2. **Configuration with Menuconfig**
+   - Configure optimal partition sizes through menuconfig
+   - Fine-tune FreeRTOS settings (stack sizes, tick rate, etc.)
+   - Enable compiler optimization levels through menuconfig
+   - Disable unnecessary components and features
+
+3. **Component Management**
+   - Structure components with clear public APIs in component.h files
+   - Use ESP-IDF's component manager for dependency management
+   - Consider private component dependencies to enforce encapsulation
+
+4. **Logging and Diagnostics**
+   - Utilize ESP_LOGx macros with appropriate log levels
+   - Configure log levels per component in menuconfig
+   - Use ESP_ERROR_CHECK selectively to avoid unnecessary overhead
+   - Implement core dumps for critical failure diagnosis

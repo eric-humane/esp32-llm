@@ -1,0 +1,11 @@
+#ifndef WIFI_CONFIG_H
+#define WIFI_CONFIG_H
+
+// WiFi credentials
+// Copy this file to wifi_config.h and update with your WiFi credentials
+// Do not commit wifi_config.h to version control!
+#define WIFI_SSID "your_ssid_here"
+#define WIFI_PASS "your_password_here"
+#define WIFI_MAX_RETRY 30
+
+#endif /* WIFI_CONFIG_H */ 

@@ -1,3 +1,5 @@
+.DS_Store
 build/
 .vscode
 managed_components/
+components/app/include/wifi_config.h

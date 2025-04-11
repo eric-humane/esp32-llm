@@ -1,0 +1,8 @@
+description: LLM Core Component for ESP32-S3
+url: https://github.com/espressif/esp32-llm
+version: 1.0.0
+dependencies:
+  idf:
+    version: ">=5.3.2"
+  esp-dsp:
+    version: "*"
