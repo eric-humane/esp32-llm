@@ -1,15 +1,11 @@
 # Running a LLM on the ESP32-S3
 
-![ESP32 LLM Demo](ESP32_LLM.jpg)
-
 ## Summary
 This project demonstrates running a Large Language Model (LLM) directly on an ESP32-S3 microcontroller. It implements a highly optimized inference engine capable of running small transformer models with extensive optimizations for embedded systems.
 
 The model is a 260K parameter [TinyLlamas checkpoint](https://huggingface.co/karpathy/tinyllamas/tree/main/stories260K) trained on the [TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories) dataset. Despite its small size, it generates coherent, simple text suitable for embedded applications.
 
 Based on [llama2.c](https://github.com/karpathy/llama2.c) with extensive ESP32-specific optimizations.
-
-![Demo](llm_output.gif)
 
 ## Hardware Requirements
 - **ESP32-S3** with 2MB PSRAM (ESP32-S3FH4R2)
